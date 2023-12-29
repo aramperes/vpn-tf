@@ -12,7 +12,7 @@ resource "digitalocean_droplet" "vpn-droplet" {
     host        = self.ipv4_address
     user        = "root"
     type        = "ssh"
-    private_key = file(var.pvt_key)
+    private_key = file(var.ssh_priv_path)
     timeout     = "2m"
   }
 
@@ -36,10 +36,26 @@ resource "digitalocean_droplet" "vpn-droplet" {
     destination = "/etc/danted.conf"
   }
 
+  // WireGuard (VPN) Configuration
+  provisioner "file" {
+    content = templatefile("${path.module}/files/wireguard/wg0.conf.tftpl", {
+      wg_subnet        = var.wg_subnet,
+      wg_self_ip       = var.wg_self_ip,
+      wg_self_priv     = var.wg_self_priv
+      wg_peer_pub      = var.wg_peer_pub
+      wg_peer_endpoint = var.wg_peer_endpoint
+    })
+    destination = "/etc/wireguard/wg0.conf"
+  }
+
   // Apply configurations
   provisioner "remote-exec" {
     inline = [
-      "systemctl restart danted.service"
+      "systemctl enable wg-quick@wg0.service",
+      "systemctl start wg-quick@wg0",
+      "systemctl enable danted.service",
+      "systemctl restart danted.service",
+      "systemctl daemon-reload",
     ]
   }
 

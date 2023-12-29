@@ -8,9 +8,10 @@ terraform {
 }
 
 variable "do_token" {
+  sensitive = true
 }
 
-variable "pvt_key" {
+variable "ssh_priv_path" {
 }
 
 variable "do_vpc" {
@@ -20,6 +21,17 @@ variable "wg_self_ip" {
 }
 
 variable "wg_subnet" {
+}
+
+variable "wg_self_priv" {
+  sensitive = true
+}
+
+variable "wg_peer_pub" {
+}
+
+variable "wg_peer_endpoint" {
+  nullable = true
 }
 
 provider "digitalocean" {
