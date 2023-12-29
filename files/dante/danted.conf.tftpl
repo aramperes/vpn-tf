@@ -1,0 +1,16 @@
+logoutput: /dev/null
+user.privileged: root
+user.unprivileged: nobody
+
+internal: ${wg_self_ip} port=1080
+external: eth0
+
+socksmethod: none
+clientmethod: none
+
+client pass {
+    from: ${wg_subnet} to: 0.0.0.0/0
+}
+socks pass {
+    from: ${wg_subnet} to: 0.0.0.0/0
+}

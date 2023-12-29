@@ -1,0 +1,8 @@
+[Interface]
+PrivateKey = ${wg_self_priv}
+ListenPort = 51820
+Address = ${wg_self_ip}
+
+[Peer]
+PublicKey = ${wg_peer_pub}
+AllowedIPs = ${wg_subnet}
