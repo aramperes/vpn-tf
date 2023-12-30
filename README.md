@@ -62,7 +62,7 @@ Before using this Terraform project, make sure you have the following prerequisi
 
 In your client's WireGuard configuration, add a peer for your newly created VPN droplet:
 
-```toml
+```shell
 [Peer]
 PublicKey = droplet_public_key
 AllowedIPs = 10.0.0.2/32
