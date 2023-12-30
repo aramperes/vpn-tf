@@ -22,7 +22,6 @@ variable "do_vpc" {
 }
 
 variable "do_ssh_key_name" {
-  default = "vpn-admin"
 }
 
 variable "do_droplet_size" {
