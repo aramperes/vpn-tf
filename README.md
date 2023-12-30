@@ -12,6 +12,7 @@ Before using this Terraform project, make sure you have the following prerequisi
 - A DigitalOcean account and a [Personal Access Token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) for authentication.
 - An SSH key pair for accessing the created droplets. You should also [upload the public key](https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/to-team/) to your DigitalOcean account.
 - A device with WireGuard installed. On Windows, create a new empty tunnel and record the public key. On Linux, generate a private/public key combination using `wg genkey` and `wg pubkey`.
+- A separate public/private key pair to be assigned to the new VPN droplet
 
 ## Usage
 
@@ -34,10 +35,10 @@ Before using this Terraform project, make sure you have the following prerequisi
     do_droplet_size = "s-1vcpu-1gb"
     do_droplet_region = "tor1"
     do_droplet_image = "ubuntu-22-04-x64"
-    wg_self_ip = "10.0.0.2"  # Update with a unique internal IP for the WireGuard endpoint
-    wg_subnet = "10.0.0.0/24"  # Update with the WireGuard address range that should be allowed to connect to your VPN.
-    wg_self_priv = "your_private_key"  # Update with your private WireGuard key
-    wg_peer_pub = "peer_public_key"  # Update with the public key of the peer (from Prerequisites)
+    wg_droplet_ip = "10.0.0.2"  # Update with a unique WireGuard IP for the droplet
+    wg_droplet_priv = "droplet_private_key"  # Update the private WireGuard key for the droplet
+    wg_subnet = "10.0.0.0/24"  # Update with the WireGuard address range that should be allowed to connect to your VPN
+    wg_peer_pub = "peer_public_key"  # Update with the public key of your client
     ```
 
 3. Initialize and apply the Terraform configuration:
@@ -56,3 +57,22 @@ Before using this Terraform project, make sure you have the following prerequisi
     ```
 
     Look for the `ipv4_address` attribute under the `digitalocean_droplet` resource. This is the IP address of your deployed droplet.
+
+## Connect
+
+In your client's WireGuard configuration, add a peer for your newly created VPN droplet:
+
+```toml
+[Peer]
+PublicKey = droplet_public_key
+AllowedIPs = 10.0.0.2/32
+Endpoint = droplet_ip:51820
+```
+
+Test the SOCKS5 proxy with curl:
+
+```bash
+curl -x socks5://10.0.0.2:1080 http://ifconfig.me
+```
+
+If all is well, this should print the Droplet's IP.
