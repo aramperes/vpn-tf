@@ -36,13 +36,13 @@ variable "do_droplet_image" {
   default = "ubuntu-22-04-x64"
 }
 
-variable "wg_self_ip" {
+variable "wg_droplet_ip" {
 }
 
 variable "wg_subnet" {
 }
 
-variable "wg_self_priv" {
+variable "wg_droplet_priv" {
   sensitive = true
 }
 

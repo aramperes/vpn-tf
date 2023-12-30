@@ -33,8 +33,8 @@ resource "digitalocean_droplet" "vpn-droplet" {
   // Dante proxy (SOCKS5) Configuration
   provisioner "file" {
     content = templatefile("${path.module}/files/dante/danted.conf.tftpl", {
-      wg_self_ip = var.wg_self_ip,
-      wg_subnet  = var.wg_subnet
+      wg_droplet_ip = var.wg_droplet_ip,
+      wg_subnet     = var.wg_subnet
     })
     destination = "/etc/danted.conf"
   }
@@ -43,8 +43,8 @@ resource "digitalocean_droplet" "vpn-droplet" {
   provisioner "file" {
     content = templatefile("${path.module}/files/wireguard/wg0.conf.tftpl", {
       wg_subnet        = var.wg_subnet,
-      wg_self_ip       = var.wg_self_ip,
-      wg_self_priv     = var.wg_self_priv
+      wg_droplet_ip    = var.wg_droplet_ip,
+      wg_droplet_priv  = var.wg_droplet_priv
       wg_peer_pub      = var.wg_peer_pub
       wg_peer_endpoint = var.wg_peer_endpoint
     })
