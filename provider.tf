@@ -4,6 +4,10 @@ terraform {
       source  = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
   }
 }
 
@@ -15,6 +19,22 @@ variable "ssh_priv_path" {
 }
 
 variable "do_vpc" {
+}
+
+variable "do_ssh_key_name" {
+  default = "vpn-admin"
+}
+
+variable "do_droplet_size" {
+  default = "s-1vcpu-1gb"
+}
+
+variable "do_droplet_region" {
+  default = "tor1"
+}
+
+variable "do_droplet_image" {
+  default = "ubuntu-22-04-x64"
 }
 
 variable "wg_self_ip" {
@@ -39,5 +59,5 @@ provider "digitalocean" {
 }
 
 data "digitalocean_ssh_key" "vpn_admin" {
-  name = "vpn-admin"
+  name = var.do_ssh_key_name
 }

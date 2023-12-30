@@ -1,8 +1,11 @@
+resource "random_pet" "droplet-name" {
+}
+
 resource "digitalocean_droplet" "vpn-droplet" {
-  image  = "ubuntu-22-04-x64"
-  name   = "vpn-tf" // todo: randomize ?
-  region = "tor1"
-  size   = "s-1vcpu-1gb"
+  image  = var.do_droplet_image
+  name   = "vpn-${random_pet.droplet-name.id}"
+  region = var.do_droplet_region
+  size   = var.do_droplet_size
   ssh_keys = [
     data.digitalocean_ssh_key.vpn_admin.id
   ]
@@ -70,7 +73,7 @@ resource "digitalocean_droplet" "vpn-droplet" {
 }
 
 resource "digitalocean_firewall" "vpn-tf" {
-  name        = "vpn-tf"
+  name        = "vpn-firewall-${random_pet.droplet-name.id}"
   droplet_ids = [digitalocean_droplet.vpn-droplet.id]
 
   inbound_rule {
