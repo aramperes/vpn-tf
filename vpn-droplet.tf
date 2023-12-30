@@ -60,11 +60,44 @@ resource "digitalocean_droplet" "vpn-droplet" {
   }
 
   // Finalizer: disable root login
-  #   provisioner "remote-exec" {
-  #     inline = [
-  #       "sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config",
-  #       "rm /root/.ssh/authorized_keys",
-  #       "service ssh restart",
-  #     ]
-  #   }
+  provisioner "remote-exec" {
+    inline = [
+      "sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config",
+      "rm /root/.ssh/authorized_keys",
+      "service ssh restart",
+    ]
+  }
+}
+
+resource "digitalocean_firewall" "vpn-tf" {
+  name        = "vpn-tf"
+  droplet_ids = [digitalocean_droplet.vpn-droplet.id]
+
+  inbound_rule {
+    protocol         = "udp"
+    port_range       = 51820
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "icmp"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "icmp"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "udp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
 }
