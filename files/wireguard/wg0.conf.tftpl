@@ -8,4 +8,5 @@ PublicKey = ${wg_peer_pub}
 AllowedIPs = ${wg_subnet}
 %{ if wg_peer_endpoint != null }
 Endpoint = ${wg_peer_endpoint}
+PersistentKeepalive = 25
 %{ endif }
